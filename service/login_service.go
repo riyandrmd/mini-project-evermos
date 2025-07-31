@@ -10,20 +10,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func LoginUser(input dto.LoginRequest) (string, *model.User, error) {
+func LoginUser(input dto.LoginRequest) (string, error) {
 	var user model.User
 	if err := config.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
-		return "", nil, errors.New("invalid email or password")
+		return "", errors.New("invalid email or password")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
-		return "", nil, errors.New("invalid email or password")
+		return "", errors.New("invalid email or password")
 	}
 
-	token, err := utils.GenerateJWT(user.ID)
+	token, err := utils.GenerateJWT(user.ID, user.IsAdmin)
 	if err != nil {
-		return "", nil, err
+		return "", err
 	}
 
-	return token, &user, nil
+	return token, nil
 }

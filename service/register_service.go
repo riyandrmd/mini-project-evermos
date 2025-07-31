@@ -18,6 +18,9 @@ func RegisterUser(input dto.RegisterRequest) (*model.User, error) {
 		Name:     input.Name,
 		Email:    input.Email,
 		Password: string(hashedPassword),
+		Phone:    input.Phone,
+		Address:  input.Address,
+		Gender:   input.Gender,
 		IsAdmin:  false,
 	}
 

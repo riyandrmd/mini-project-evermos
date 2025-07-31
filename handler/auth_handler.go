@@ -33,18 +33,12 @@ func Login(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	token, user, err := service.LoginUser(input)
+	token, err := service.LoginUser(input)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusUnauthorized, err.Error())
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Login successful", dto.LoginResponse{
+	return utils.SuccessResponse(c, fiber.StatusOK, "Login Successful", dto.LoginResponse{
 		Token: token,
-		User: dto.UserResponse{
-			ID:      user.ID,
-			Name:    user.Name,
-			Email:   user.Email,
-			IsAdmin: user.IsAdmin,
-		},
 	})
 }
