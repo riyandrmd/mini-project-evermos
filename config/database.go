@@ -31,6 +31,8 @@ func InitDB() {
 		&model.User{},
 		&model.Category{},
 		&model.Store{},
+		&model.Product{},
+		&model.Address{},
 	)
 	if err != nil {
 		panic("Failed to migrate table: " + err.Error())

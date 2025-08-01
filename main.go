@@ -22,6 +22,8 @@ func main() {
 	routes.AuthRoutes(app)
 	routes.CategoryRoutes(app)
 	routes.StoreRoutes(app)
+	routes.ProductRoutes(app)
+	routes.AddressRoutes(app)
 
 	log.Fatal(app.Listen(":8080"))
 }
