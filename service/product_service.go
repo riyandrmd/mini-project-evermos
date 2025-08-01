@@ -7,31 +7,32 @@ import (
 	"toko-api/model"
 )
 
-func CreateProduct(userID uint, input dto.CreateProductRequest) (*model.Product, error) {
+func CreateProduct(userID uint, request dto.CreateProductRequest) error {
 	var store model.Store
-
 	if err := config.DB.Where("user_id = ?", userID).First(&store).Error; err != nil {
-		return nil, errors.New("you do not own a store")
+		return errors.New("store not found")
 	}
 
-	var category model.Category
-	if err := config.DB.First(&category, input.CategoryID).Error; err != nil {
-		return nil, errors.New("category not found")
+	var exists model.Product
+	if err := config.DB.Where("slug = ?", request.Slug).First(&exists).Error; err == nil {
+		return errors.New("slug already exists")
 	}
 
 	product := model.Product{
-		Name:       input.Name,
-		Price:      input.Price,
-		Stock:      input.Stock,
-		StoreID:    store.ID,
-		CategoryID: input.CategoryID,
+		Name:          request.Name,
+		Slug:          request.Slug,
+		PriceReseller: request.PriceReseller,
+		PriceCustomer: request.PriceCustomer,
+		Description:   request.Description,
+		CategoryID:    request.CategoryID,
+		StoreID:       store.ID,
 	}
 
 	if err := config.DB.Create(&product).Error; err != nil {
-		return nil, err
+		return errors.New("failed to create product")
 	}
 
-	return &product, nil
+	return nil
 }
 
 func GetAllProducts() ([]model.Product, error) {
@@ -42,68 +43,75 @@ func GetAllProducts() ([]model.Product, error) {
 	return products, nil
 }
 
-func GetProductByID(id uint) (*model.Product, error) {
+func UpdateProduct(userID uint, id string, request dto.UpdateProductRequest) error {
 	var product model.Product
 	if err := config.DB.First(&product, id).Error; err != nil {
-		return nil, err
-	}
-	return &product, nil
-}
-
-func UpdateProductByID(userID, productID uint, input dto.CreateProductRequest) (*model.Product, error) {
-	var store model.Store
-	if err := config.DB.Where("user_id = ?", userID).First(&store).Error; err != nil {
-		return nil, errors.New("unauthorized: store not found")
-	}
-
-	var product model.Product
-	if err := config.DB.First(&product, productID).Error; err != nil {
-		return nil, errors.New("product not found")
-	}
-
-	if product.StoreID != store.ID {
-		return nil, errors.New("unauthorized: not your product")
-	}
-
-	product.Name = input.Name
-	product.Price = input.Price
-	product.Stock = input.Stock
-	product.CategoryID = input.CategoryID
-
-	if err := config.DB.Save(&product).Error; err != nil {
-		return nil, err
-	}
-
-	return &product, nil
-}
-
-func DeleteProductByID(userID, productID uint) error {
-	var store model.Store
-	if err := config.DB.Where("user_id = ?", userID).First(&store).Error; err != nil {
-		return errors.New("unauthorized: store not found")
-	}
-
-	var product model.Product
-	if err := config.DB.First(&product, productID).Error; err != nil {
 		return errors.New("product not found")
 	}
 
-	if product.StoreID != store.ID {
-		return errors.New("unauthorized: not your product")
+	// Validasi: hanya pemilik produk yang boleh update
+	var store model.Store
+	if err := config.DB.Where("id = ? AND user_id = ?", product.StoreID, userID).First(&store).Error; err != nil {
+		return errors.New("unauthorized")
 	}
 
-	return config.DB.Delete(&product).Error
+	if request.Name != "" {
+		product.Name = request.Name
+	}
+	if request.Slug != "" {
+		product.Slug = request.Slug
+	}
+	if request.Description != "" {
+		product.Description = request.Description
+	}
+	if request.PriceReseller != 0 {
+		product.PriceReseller = request.PriceReseller
+	}
+	if request.PriceCustomer != 0 {
+		product.PriceCustomer = request.PriceCustomer
+	}
+	if request.CategoryID != 0 {
+		product.CategoryID = request.CategoryID
+	}
+
+	if err := config.DB.Save(&product).Error; err != nil {
+		return errors.New("failed to update product")
+	}
+
+	return nil
 }
 
-func GetProductsByUser(userID uint) ([]model.Product, error) {
+func DeleteProduct(userID uint, id string) error {
+	var product model.Product
+	if err := config.DB.First(&product, id).Error; err != nil {
+		return errors.New("product not found")
+	}
+
+	var store model.Store
+	if err := config.DB.Where("id = ? AND user_id = ?", product.StoreID, userID).First(&store).Error; err != nil {
+		return errors.New("unauthorized")
+	}
+
+	if err := config.DB.Delete(&product).Error; err != nil {
+		return errors.New("failed to delete product")
+	}
+
+	return nil
+}
+
+func GetMyProducts(userID uint) ([]model.Product, error) {
 	var store model.Store
 	if err := config.DB.Where("user_id = ?", userID).First(&store).Error; err != nil {
 		return nil, errors.New("store not found")
 	}
 
 	var products []model.Product
-	if err := config.DB.Where("store_id = ?", store.ID).Find(&products).Error; err != nil {
-		return nil, err
+	if err := config.DB.
+		Preload("Store").
+		Preload("Category").
+		Where("store_id = ?", store.ID).
+		Find(&products).Error; err != nil {
+		return nil, errors.New("failed to fetch products")
 	}
 
 	return products, nil
