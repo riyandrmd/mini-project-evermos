@@ -10,6 +10,6 @@ import (
 func TrxRoutes(app fiber.Router) {
 	trx := app.Group("/transactions", middleware.AuthJWT())
 	trx.Post("/", handler.CreateTrx)
-	trx.Get("/", handler.GetMyTransactions)
+	trx.Get("/my", handler.GetMyTransactions)
 	trx.Get("/:id", handler.GetTrxByID)
 }

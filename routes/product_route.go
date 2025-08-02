@@ -15,4 +15,8 @@ func ProductRoutes(api fiber.Router) {
 	product.Get("/my-products", handler.GetMyProducts)
 	product.Put("/:id", handler.UpdateProduct)
 	product.Delete("/:id", handler.DeleteProduct)
+	product.Get("/:id/images", handler.UploadProductImage)
+	product.Post("/:id/images", handler.UploadProductImage)
+	product.Delete("/images/:imageId", handler.DeleteProductImage)
+
 }
