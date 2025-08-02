@@ -36,6 +36,7 @@ func InitDB() {
 		&model.Trx{},
 		&model.DetailTrx{},
 		&model.LogProduct{},
+		&model.ProductImage{},
 	)
 	if err != nil {
 		panic("Failed to migrate table: " + err.Error())
