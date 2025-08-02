@@ -6,6 +6,7 @@ type CreateProductRequest struct {
 	Description   string  `json:"description" validate:"required"`
 	PriceReseller float64 `json:"price_reseller" validate:"required"`
 	PriceCustomer float64 `json:"price_customer" validate:"required"`
+	Stock         int     `json:"stock" validate:"required"`
 	CategoryID    uint    `json:"category_id" validate:"required"`
 }
 

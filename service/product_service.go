@@ -24,6 +24,7 @@ func CreateProduct(userID uint, request dto.CreateProductRequest) error {
 		PriceReseller: request.PriceReseller,
 		PriceCustomer: request.PriceCustomer,
 		Description:   request.Description,
+		Stock:         request.Stock,
 		CategoryID:    request.CategoryID,
 		StoreID:       store.ID,
 	}
@@ -35,12 +36,32 @@ func CreateProduct(userID uint, request dto.CreateProductRequest) error {
 	return nil
 }
 
-func GetAllProducts() ([]model.Product, error) {
+func GetAllProducts(page, limit int, name string, categoryID uint) ([]model.Product, int64, error) {
+	db := config.DB
+
 	var products []model.Product
-	if err := config.DB.Find(&products).Error; err != nil {
-		return nil, err
+	var total int64
+
+	query := db.Model(&model.Product{}).Preload("Category").Preload("Store")
+
+	if name != "" {
+		query = query.Where("name LIKE ?", "%"+name+"%")
 	}
-	return products, nil
+
+	if categoryID != 0 {
+		query = query.Where("category_id = ?", categoryID)
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * limit
+	if err := query.Offset(offset).Limit(limit).Find(&products).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return products, total, nil
 }
 
 func UpdateProduct(userID uint, id string, request dto.UpdateProductRequest) error {

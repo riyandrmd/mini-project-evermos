@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"strconv"
 	"toko-api/dto"
 	"toko-api/service"
 	"toko-api/utils"
@@ -32,6 +33,27 @@ func CreateProduct(c *fiber.Ctx) error {
 	}
 
 	return utils.SuccessResponse(c, fiber.StatusCreated, "Product created", nil)
+}
+
+func GetAllProducts(c *fiber.Ctx) error {
+	page, _ := strconv.Atoi(c.Query("page", "1"))
+	limit, _ := strconv.Atoi(c.Query("limit", "10"))
+	name := c.Query("name")
+	categoryID, _ := strconv.Atoi(c.Query("category_id", "0"))
+
+	products, total, err := service.GetAllProducts(page, limit, name, uint(categoryID))
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to fetch products")
+	}
+
+	response := fiber.Map{
+		"products": products,
+		"total":    total,
+		"page":     page,
+		"limit":    limit,
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "Products fetched", response)
 }
 
 func UpdateProduct(c *fiber.Ctx) error {

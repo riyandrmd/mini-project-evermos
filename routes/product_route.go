@@ -11,7 +11,8 @@ func ProductRoutes(api fiber.Router) {
 	product := api.Group("/products", middleware.AuthJWT())
 
 	product.Post("/", handler.CreateProduct)
-	product.Get("/", handler.GetMyProducts)
+	product.Get("/", handler.GetAllProducts)
+	product.Get("/my-products", handler.GetMyProducts)
 	product.Put("/:id", handler.UpdateProduct)
 	product.Delete("/:id", handler.DeleteProduct)
 }
