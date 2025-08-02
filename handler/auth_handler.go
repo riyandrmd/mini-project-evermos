@@ -38,8 +38,10 @@ func Register(c *fiber.Ctx) error {
 		Password: hashed,
 		Phone:    input.Phone,
 		Gender:   input.Gender,
-		Address:  input.Address,
-		IsAdmin:  false,
+		About:    input.About,
+		Job:      input.Job,
+		Province: input.Province,
+		City:     input.City,
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {

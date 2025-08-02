@@ -19,11 +19,12 @@ func RegisterUser(input dto.RegisterRequest) (*model.User, error) {
 		Email:    input.Email,
 		Password: string(hashedPassword),
 		Phone:    input.Phone,
-		Address:  input.Address,
 		Gender:   input.Gender,
-		IsAdmin:  false,
+		About:    input.About,
+		Job:      input.Job,
+		Province: input.Province,
+		City:     input.City,
 	}
-
 	if err := config.DB.Create(&user).Error; err != nil {
 		return nil, err
 	}
