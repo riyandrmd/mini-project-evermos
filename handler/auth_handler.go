@@ -46,7 +46,6 @@ func Register(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	// Buat store otomatis
 	store := model.Store{
 		Name:   user.Name,
 		UserID: user.ID,
@@ -55,7 +54,6 @@ func Register(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to create store")
 	}
 
-	// Response
 	response := dto.RegisterResponse{
 		ID:    user.ID,
 		Name:  user.Name,

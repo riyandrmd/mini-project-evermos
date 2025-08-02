@@ -49,7 +49,6 @@ func UpdateProduct(userID uint, id string, request dto.UpdateProductRequest) err
 		return errors.New("product not found")
 	}
 
-	// Validasi: hanya pemilik produk yang boleh update
 	var store model.Store
 	if err := config.DB.Where("id = ? AND user_id = ?", product.StoreID, userID).First(&store).Error; err != nil {
 		return errors.New("unauthorized")
