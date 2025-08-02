@@ -26,6 +26,7 @@ func main() {
 	routes.AddressRoutes(app)
 	routes.TrxRoutes(app)
 	routes.ProductImageRoutes(app)
+	routes.WilayahRoutes(app)
 
 	log.Fatal(app.Listen(":8080"))
 }
