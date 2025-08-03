@@ -24,9 +24,9 @@ func main() {
 	routes.AddressRoutes(app)
 	routes.StoreRoutes(app)
 	routes.CategoryRoutes(app)
-
 	routes.ProductRoutes(app)
 	routes.TrxRoutes(app)
+	routes.ProvinsiRoutes(app)
 
 	log.Fatal(app.Listen(":3000"))
 }
