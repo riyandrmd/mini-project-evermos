@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"nama\": \"Admin\",\r\n  \"kata_sandi\": \"rahasia123\",\r\n  \"notelp\": \"085888111222\",\r\n  \"email\": \"admin@example.com\",\r\n  \"tanggal_lahir\": \" \",\r\n  \"jenis_kelamin\": \" \",\r\n  \"tentang\": \" \",\r\n  \"pekerjaan\": \" \",\r\n  \"id_provinsi\": \" \",\r\n  \"id_kota\": \" \"\r\n}",
+							"raw": "{\r\n  \"nama\": \"vegapunk\",\r\n  \"kata_sandi\": \"rahasia123\",\r\n  \"notelp\": \"086787885677\",\r\n  \"email\": \"vegapunk@example.com\",\r\n  \"tanggal_lahir\": \"2000-01-01\",\r\n  \"jenis_kelamin\": \"Laki-laki\",\r\n  \"tentang\": \"Saya adalah reseller\",\r\n  \"pekerjaan\": \"Mahasiswa\",\r\n  \"id_provinsi\": \"11\",\r\n  \"id_kota\": \"1101\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -24,12 +24,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/auth/register",
-							"protocol": "http",
+							"raw": "{{base_url}}/auth/register",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"auth",
 								"register"
@@ -45,7 +43,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"admin@example.com\",\r\n  \"kata_sandi\": \"rahasia123\"\r\n}\r\n",
+							"raw": "{\r\n  \"email\": \"ryannew@example.com\",\r\n  \"kata_sandi\": \"rahasia123\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -53,12 +51,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/auth/login",
-							"protocol": "http",
+							"raw": "{{base_url}}/auth/login",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"auth",
 								"login"
@@ -100,12 +96,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/users/me",
-							"protocol": "http",
+							"raw": "{{base_url}}/users/me",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"users",
 								"me"
@@ -139,12 +133,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/users/me",
-							"protocol": "http",
+							"raw": "{{base_url}}/users/me",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"users",
 								"me"
@@ -178,12 +170,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/user/alamat",
-							"protocol": "http",
+							"raw": "{{base_url}}/user/alamat",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"user",
 								"alamat"
@@ -208,12 +198,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/user/alamat",
-							"protocol": "http",
+							"raw": "{{base_url}}/user/alamat",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"user",
 								"alamat"
@@ -238,12 +226,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/user/alamat/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/user/alamat/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"user",
 								"alamat",
@@ -278,12 +264,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/user/alamat/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/user/alamat/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"user",
 								"alamat",
@@ -309,16 +293,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/user/alamat/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/user/alamat/5",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"user",
 								"alamat",
-								"2"
+								"5"
 							]
 						}
 					},
@@ -345,12 +327,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/toko",
-							"protocol": "http",
+							"raw": "{{base_url}}/toko",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"toko"
 							]
@@ -394,12 +374,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/toko",
-							"protocol": "http",
+							"raw": "{{base_url}}/toko",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"toko"
 							]
@@ -437,12 +415,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/categories",
-							"protocol": "http",
+							"raw": "{{base_url}}/categories",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"categories"
 							]
@@ -456,12 +432,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/categories",
-							"protocol": "http",
+							"raw": "{{base_url}}/categories",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"categories"
 							]
@@ -494,12 +468,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/categories/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/categories/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"categories",
 								"1"
@@ -524,12 +496,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/categories/4",
-							"protocol": "http",
+							"raw": "{{base_url}}/categories/4",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"categories",
 								"4"
@@ -544,12 +514,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/categories/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/categories/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"categories",
 								"1"
@@ -614,12 +582,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/products",
-							"protocol": "http",
+							"raw": "{{base_url}}/products",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"products"
 							]
@@ -633,12 +599,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/products?page=1&limit=5&nama_produk=sepatu&id_category=2&harga_min=100000&harga_max=30000",
-							"protocol": "http",
+							"raw": "{{base_url}}/products?page=1&limit=5&nama_produk=sepatu&id_category=2&harga_min=100000&harga_max=30000",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"products"
 							],
@@ -678,12 +642,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/products/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/products/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"products",
 								"1"
@@ -744,12 +706,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/products/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/products/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"products",
 								"1"
@@ -774,12 +734,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/products/1",
-							"protocol": "http",
+							"raw": "{{base_url}}/products/1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"products",
 								"1"
@@ -818,12 +776,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/transactions",
-							"protocol": "http",
+							"raw": "{{base_url}}/transactions",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"transactions"
 							]
@@ -847,12 +803,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/transactions",
-							"protocol": "http",
+							"raw": "{{base_url}}/transactions",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"transactions"
 							]
@@ -876,12 +830,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/transactions/2",
-							"protocol": "http",
+							"raw": "{{base_url}}/transactions/2",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"transactions",
 								"2"
@@ -901,12 +853,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/provinces",
-							"protocol": "http",
+							"raw": "{{base_url}}/provinces",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3000",
 							"path": [
 								"provinces"
 							]
@@ -915,6 +865,35 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
 		}
 	]
 }
