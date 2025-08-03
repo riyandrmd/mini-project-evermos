@@ -1,0 +1,920 @@
+{
+	"info": {
+		"_postman_id": "a5f016f8-84b4-4f4e-8331-8a944349d5c4",
+		"name": "Mini Project Evermos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23896303"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nama\": \"Admin\",\r\n  \"kata_sandi\": \"rahasia123\",\r\n  \"notelp\": \"085888111222\",\r\n  \"email\": \"admin@example.com\",\r\n  \"tanggal_lahir\": \" \",\r\n  \"jenis_kelamin\": \" \",\r\n  \"tentang\": \" \",\r\n  \"pekerjaan\": \" \",\r\n  \"id_provinsi\": \" \",\r\n  \"id_kota\": \" \"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"admin@example.com\",\r\n  \"kata_sandi\": \"rahasia123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get My Profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTQyNzIsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.oo79qmrABEiWZ4U2UrzjOrWkaHLeyPZ8ixk4UklroVI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTQyNzIsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.oo79qmrABEiWZ4U2UrzjOrWkaHLeyPZ8ixk4UklroVI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nama\": \"Ryan Updated\",\r\n  \"notelp\": \"081234567890\",\r\n  \"email\": \"ryannew@example.com\",\r\n  \"tanggal_lahir\": \"2000-02-02\",\r\n  \"jenis_kelamin\": \"Laki-laki\",\r\n  \"tentang\": \"Update profile\",\r\n  \"pekerjaan\": \"Programmer\",\r\n  \"id_provinsi\": \"31\",\r\n  \"id_kota\": \"3171\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Alamat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTcyODUsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.qbsK2Piqfl-dVhC5PhsyRsljiEWJKdO-f09Nxpt_V9w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"judul_alamat\": \"Rumah Orang Tua\",\r\n  \"nama_penerima\": \"Ryan\",\r\n  \"no_telp\": \"081234567890\",\r\n  \"detail_alamat\": \"Jalan Melati No. 25, RT 03 RW 05\",\r\n  \"id_provinsi\": \"11\",\r\n  \"id_kota\": \"1101\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/user/alamat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"alamat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Alamat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTcyODUsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.qbsK2Piqfl-dVhC5PhsyRsljiEWJKdO-f09Nxpt_V9w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/alamat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"alamat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Alamat By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTcyODUsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.qbsK2Piqfl-dVhC5PhsyRsljiEWJKdO-f09Nxpt_V9w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/alamat/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"alamat",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Alamat By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTcyODUsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.qbsK2Piqfl-dVhC5PhsyRsljiEWJKdO-f09Nxpt_V9w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"judul_alamat\": \"Rumah Update\",\r\n  \"nama_penerima\": \"Si Jon\",\r\n  \"no_telp\": \"081234567890\",\r\n  \"detail_alamat\": \"Jalan Melati No. 25, RT 03 RW 05\",\r\n  \"id_provinsi\": \"11\",\r\n  \"id_kota\": \"1101\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/user/alamat/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"alamat",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hapus Alamat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTcyODUsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.qbsK2Piqfl-dVhC5PhsyRsljiEWJKdO-f09Nxpt_V9w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/alamat/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"alamat",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Toko",
+			"item": [
+				{
+					"name": "Get Toko",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTcyODUsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.qbsK2Piqfl-dVhC5PhsyRsljiEWJKdO-f09Nxpt_V9w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/toko",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"toko"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Toko",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQyOTcyODUsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.qbsK2Piqfl-dVhC5PhsyRsljiEWJKdO-f09Nxpt_V9w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nama_toko",
+									"value": "Toko Keren Ryan",
+									"type": "text"
+								},
+								{
+									"key": "deskripsi",
+									"value": "fashion dan elektronik",
+									"type": "text"
+								},
+								{
+									"key": "foto",
+									"type": "file",
+									"src": "/C:/Users/USER/Downloads/ootdsupply-7374-6631234-1.webp"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/toko",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"toko"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Post Category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMDA2MzAsImlzX2FkbWluIjp0cnVlLCJ1c2VyX2lkIjoyfQ.SwRnfHYO_gzefvm-whNfTjY87m3YvfP8A1st9HGWSIs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nama_category\": \"Makanan\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMDA2MzAsImlzX2FkbWluIjp0cnVlLCJ1c2VyX2lkIjoyfQ.SwRnfHYO_gzefvm-whNfTjY87m3YvfP8A1st9HGWSIs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nama_category\": \"Baju Pria\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/categories/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMDA2MzAsImlzX2FkbWluIjp0cnVlLCJ1c2VyX2lkIjoyfQ.SwRnfHYO_gzefvm-whNfTjY87m3YvfP8A1st9HGWSIs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/categories/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/categories/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Post Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMTM5ODYsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.h-02rZ1SJygpl5113XtkNc0I8a4zbkUaIxtdMeEtAZw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nama_produk",
+									"value": "Tamiya",
+									"type": "text"
+								},
+								{
+									"key": "category_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "harga",
+									"value": "50000",
+									"type": "text"
+								},
+								{
+									"key": "stok",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "deskripsi",
+									"value": "Tornado",
+									"type": "text"
+								},
+								{
+									"key": "photos",
+									"type": "file",
+									"src": "/C:/Users/USER/Downloads/L Nendoroid.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/products?page=1&limit=5&nama_produk=sepatu&id_category=2&harga_min=100000&harga_max=30000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "nama_produk",
+									"value": "sepatu"
+								},
+								{
+									"key": "id_category",
+									"value": "2"
+								},
+								{
+									"key": "harga_min",
+									"value": "100000"
+								},
+								{
+									"key": "harga_max",
+									"value": "30000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/products/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Porducts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMTM5ODYsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.h-02rZ1SJygpl5113XtkNc0I8a4zbkUaIxtdMeEtAZw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nama_produk",
+									"value": "Nendoroid",
+									"type": "text"
+								},
+								{
+									"key": "category_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "harga",
+									"value": "50000",
+									"type": "text"
+								},
+								{
+									"key": "stok",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "deskripsi",
+									"value": "Tornado",
+									"type": "text"
+								},
+								{
+									"key": "photos",
+									"type": "file",
+									"src": "/C:/Users/USER/Downloads/L Nendoroid.jpg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/products/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMTM5ODYsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.h-02rZ1SJygpl5113XtkNc0I8a4zbkUaIxtdMeEtAZw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/products/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trx",
+			"item": [
+				{
+					"name": "Post Trx",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMTM5ODYsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.h-02rZ1SJygpl5113XtkNc0I8a4zbkUaIxtdMeEtAZw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id_alamat\": 1,\r\n  \"metode_pembayaran\": \"transfer_bank\",\r\n  \"items\": [\r\n    { \r\n        \"product_id\": 2,\r\n        \"qty\": 2\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/transactions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Trx",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMTM5ODYsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.h-02rZ1SJygpl5113XtkNc0I8a4zbkUaIxtdMeEtAZw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/transactions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trx By ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQzMTM5ODYsImlzX2FkbWluIjpmYWxzZSwidXNlcl9pZCI6MX0.h-02rZ1SJygpl5113XtkNc0I8a4zbkUaIxtdMeEtAZw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/transactions/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"transactions",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Provinces",
+			"item": [
+				{
+					"name": "Get All Provinces",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/provinces",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"provinces"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
