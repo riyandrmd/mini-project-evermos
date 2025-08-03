@@ -1,108 +1,94 @@
 package handler
 
 import (
+	"fmt"
+	"path/filepath"
 	"strconv"
+	"toko-api/config"
 	"toko-api/dto"
 	"toko-api/service"
-	"toko-api/utils"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 func CreateProduct(c *fiber.Ctx) error {
-	var req dto.CreateProductRequest
+	userID := c.Locals("user_id").(uint)
 
-	if err := c.BodyParser(&req); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
+	namaProduk := c.FormValue("nama_produk")
+	deskripsi := c.FormValue("deskripsi")
+	categoryID, _ := strconv.Atoi(c.FormValue("category_id"))
+	harga, _ := strconv.Atoi(c.FormValue("harga"))
+	stok, _ := strconv.Atoi(c.FormValue("stok"))
+
+	if namaProduk == "" || categoryID == 0 || harga == 0 || stok == 0 {
+		return c.Status(400).JSON(fiber.Map{"status": false, "message": "Field wajib tidak boleh kosong"})
 	}
 
-	validate := validator.New()
-	if err := validate.Struct(&req); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	product, err := service.CreateProduct(userID, dto.CreateProductRequest{
+		NamaProduk: namaProduk,
+		Deskripsi:  deskripsi,
+		CategoryID: uint(categoryID),
+		Harga:      harga,
+		Stok:       stok,
+	})
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"status": false, "message": err.Error()})
 	}
 
-	userIDFloat, ok := c.Locals("user_id").(float64)
-	if !ok {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid user ID")
-	}
-	userID := uint(userIDFloat)
+	form, err := c.MultipartForm()
+	if err == nil && form != nil {
+		files := form.File["photos"]
+		for _, file := range files {
+			// Buat nama file unik
+			filename := fmt.Sprintf("produk_%d_%s", product.ID, file.Filename)
+			savePath := filepath.Join("uploads/products", filename)
 
-	if err := service.CreateProduct(userID, req); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+			if err := c.SaveFile(file, savePath); err != nil {
+				continue
+			}
+
+			service.SaveProductImage(product.ID, savePath)
+		}
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusCreated, "Product created", nil)
+	config.DB.Preload("Images").
+		Preload("Toko").
+		Preload("Category").
+		First(&product)
+
+	return c.Status(201).JSON(fiber.Map{
+		"status":  true,
+		"message": "Produk berhasil dibuat",
+		"data":    product,
+	})
 }
 
 func GetAllProducts(c *fiber.Ctx) error {
-	page, _ := strconv.Atoi(c.Query("page", "1"))
-	limit, _ := strconv.Atoi(c.Query("limit", "10"))
-	name := c.Query("name")
-	categoryID, _ := strconv.Atoi(c.Query("category_id", "0"))
+	filters := map[string]string{
+		"nama_produk": c.Query("nama_produk"),
+		"id_category": c.Query("id_category"),
+		"id_toko":     c.Query("id_toko"),
+		"harga_min":   c.Query("harga_min"),
+		"harga_max":   c.Query("harga_max"),
+		"page":        c.Query("page"),
+		"limit":       c.Query("limit"),
+	}
 
-	products, total, err := service.GetAllProducts(page, limit, name, uint(categoryID))
+	products, err := service.GetAllProducts(filters)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to fetch products")
+		return c.Status(500).JSON(fiber.Map{"status": false, "message": "Gagal mengambil produk", "error": err.Error()})
 	}
 
-	response := fiber.Map{
-		"products": products,
-		"total":    total,
-		"page":     page,
-		"limit":    limit,
-	}
-
-	return utils.SuccessResponse(c, fiber.StatusOK, "Products fetched", response)
+	return c.JSON(fiber.Map{"status": true, "data": products})
 }
 
-func UpdateProduct(c *fiber.Ctx) error {
+func GetProductByID(c *fiber.Ctx) error {
 	id := c.Params("id")
-	var req dto.UpdateProductRequest
 
-	if err := c.BodyParser(&req); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
-	}
-
-	userIDFloat, ok := c.Locals("user_id").(float64)
-	if !ok {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid user ID")
-	}
-	userID := uint(userIDFloat)
-
-	if err := service.UpdateProduct(userID, id, req); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
-	}
-
-	return utils.SuccessResponse(c, fiber.StatusOK, "Product updated", nil)
-}
-
-func DeleteProduct(c *fiber.Ctx) error {
-	id := c.Params("id")
-	userIDFloat, ok := c.Locals("user_id").(float64)
-	if !ok {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid user ID")
-	}
-	userID := uint(userIDFloat)
-
-	if err := service.DeleteProduct(userID, id); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
-	}
-
-	return utils.SuccessResponse(c, fiber.StatusOK, "Product deleted", nil)
-}
-
-func GetMyProducts(c *fiber.Ctx) error {
-	userIDFloat, ok := c.Locals("user_id").(float64)
-	if !ok {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid user ID")
-	}
-	userID := uint(userIDFloat)
-
-	products, err := service.GetMyProducts(userID)
+	product, err := service.GetProductByID(id)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+		return c.Status(404).JSON(fiber.Map{"status": false, "message": "Produk tidak ditemukan"})
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Products fetched", products)
+	return c.JSON(fiber.Map{"status": true, "data": product})
 }
