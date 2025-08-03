@@ -27,7 +27,7 @@ func main() {
 	routes.CategoryRoutes(api)
 	routes.ProductRoutes(api)
 	routes.TrxRoutes(api)
-	routes.ProvinsiRoutes(app)
+	routes.ProvinsiRoutes(api)
 
 	log.Fatal(app.Listen(":3000"))
 }
