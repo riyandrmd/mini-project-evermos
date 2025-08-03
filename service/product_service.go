@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -92,4 +93,45 @@ func GetProductByID(id string) (*model.Product, error) {
 	}
 
 	return &product, nil
+}
+
+func UpdateProduct(userID uint, productID string, input dto.CreateProductRequest) (*model.Product, error) {
+	var product model.Product
+
+	err := config.DB.Preload("Toko").First(&product, productID).Error
+	if err != nil {
+		return nil, errors.New("produk tidak ditemukan")
+	}
+
+	if product.Toko.UserID != userID {
+		return nil, errors.New("kamu tidak berhak mengubah produk ini")
+	}
+
+	product.NamaProduk = input.NamaProduk
+	product.Deskripsi = input.Deskripsi
+	product.Harga = input.Harga
+	product.Stok = input.Stok
+	product.CategoryID = input.CategoryID
+	product.Slug = strings.ToLower(strings.ReplaceAll(input.NamaProduk, " ", "-"))
+
+	if err := config.DB.Save(&product).Error; err != nil {
+		return nil, err
+	}
+
+	return &product, nil
+}
+
+func DeleteProduct(userID uint, productID string) error {
+	var product model.Product
+	if err := config.DB.Preload("Toko").First(&product, productID).Error; err != nil {
+		return errors.New("produk tidak ditemukan")
+	}
+	if product.Toko.UserID != userID {
+		return errors.New("kamu tidak berhak menghapus produk ini")
+	}
+
+	// Hapus gambar juga (opsional)
+	config.DB.Where("product_id = ?", product.ID).Delete(&model.ProductImage{})
+
+	return config.DB.Delete(&product).Error
 }

@@ -7,16 +7,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ProductRoutes(api fiber.Router) {
-	product := api.Group("/products", middleware.AuthJWT())
+func ProductRoutes(app *fiber.App) {
+	products := app.Group("/products")
 
-	product.Post("/", handler.CreateProduct)
-	product.Get("/", handler.GetAllProducts)
-	product.Get("/my-products", handler.GetMyProducts)
-	product.Put("/:id", handler.UpdateProduct)
-	product.Delete("/:id", handler.DeleteProduct)
-	product.Get("/:id/images", handler.UploadProductImage)
-	product.Post("/:id/images", handler.UploadProductImage)
-	product.Delete("/images/:imageId", handler.DeleteProductImage)
-
+	products.Post("/", middleware.AuthJWT(), handler.CreateProduct)
+	products.Get("/", handler.GetAllProducts)
+	products.Get("/:id", handler.GetProductByID)
+	products.Put("/:id", middleware.AuthJWT(), handler.UpdateProduct)
+	products.Delete("/:id", middleware.AuthJWT(), handler.DeleteProduct)
 }

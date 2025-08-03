@@ -92,3 +92,50 @@ func GetProductByID(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{"status": true, "data": product})
 }
+
+func UpdateProduct(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
+	id := c.Params("id")
+
+	namaProduk := c.FormValue("nama_produk")
+	deskripsi := c.FormValue("deskripsi")
+	categoryID, _ := strconv.Atoi(c.FormValue("category_id"))
+	harga, _ := strconv.Atoi(c.FormValue("harga"))
+	stok, _ := strconv.Atoi(c.FormValue("stok"))
+
+	if namaProduk == "" || categoryID == 0 || harga == 0 || stok == 0 {
+		return c.Status(400).JSON(fiber.Map{
+			"status":  false,
+			"message": "Field wajib tidak boleh kosong",
+		})
+	}
+
+	product, err := service.UpdateProduct(userID, id, dto.CreateProductRequest{
+		NamaProduk: namaProduk,
+		Deskripsi:  deskripsi,
+		CategoryID: uint(categoryID),
+		Harga:      harga,
+		Stok:       stok,
+	})
+
+	if err != nil {
+		return c.Status(403).JSON(fiber.Map{"status": false, "message": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{
+		"status":  true,
+		"message": "Produk diperbarui",
+		"data":    product,
+	})
+}
+
+func DeleteProduct(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
+	id := c.Params("id")
+
+	if err := service.DeleteProduct(userID, id); err != nil {
+		return c.Status(403).JSON(fiber.Map{"status": false, "message": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{"status": true, "message": "Produk berhasil dihapus"})
+}
