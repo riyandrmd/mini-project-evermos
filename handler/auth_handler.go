@@ -1,82 +1,44 @@
 package handler
 
 import (
-	"toko-api/config"
 	"toko-api/dto"
-	"toko-api/model"
 	"toko-api/service"
-	"toko-api/utils"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
+var validate = validator.New()
+
 func Register(c *fiber.Ctx) error {
-	var input dto.RegisterRequest
+	var req dto.RegisterRequest
 
-	if err := c.BodyParser(&input); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  false,
+			"message": "Gagal memproses input",
+			"error":   err.Error(),
+		})
 	}
 
-	if err := validator.New().Struct(input); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	if err := validate.Struct(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  false,
+			"message": "Validasi gagal",
+			"error":   err.Error(),
+		})
 	}
 
-	var existing model.User
-	if err := config.DB.Where("email = ? OR phone = ?", input.Email, input.Phone).First(&existing).Error; err == nil {
-		return utils.ErrorResponse(c, fiber.StatusConflict, "Email or phone already exists")
+	if err := service.RegisterUser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  false,
+			"message": "Registrasi gagal",
+			"error":   err.Error(),
+		})
 	}
 
-	hashed, err := utils.HashPassword(input.Password)
-	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to hash password")
-	}
-
-	user := model.User{
-		Name:     input.Name,
-		Email:    input.Email,
-		Password: hashed,
-		Phone:    input.Phone,
-		Gender:   input.Gender,
-		About:    input.About,
-		Job:      input.Job,
-		Province: input.Province,
-		City:     input.City,
-	}
-
-	if err := config.DB.Create(&user).Error; err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
-	}
-
-	store := model.Store{
-		Name:   user.Name,
-		UserID: user.ID,
-	}
-	if err := config.DB.Create(&store).Error; err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to create store")
-	}
-
-	response := dto.RegisterResponse{
-		ID:    user.ID,
-		Name:  user.Name,
-		Email: user.Email,
-	}
-	return utils.SuccessResponse(c, fiber.StatusCreated, "User registered successfully", response)
-}
-
-func Login(c *fiber.Ctx) error {
-	var input dto.LoginRequest
-
-	if err := c.BodyParser(&input); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
-	}
-
-	token, err := service.LoginUser(input)
-	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, err.Error())
-	}
-
-	return utils.SuccessResponse(c, fiber.StatusOK, "Login Successful", dto.LoginResponse{
-		Token: token,
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"status":  true,
+		"message": "Registrasi berhasil",
 	})
 }
