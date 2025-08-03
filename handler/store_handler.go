@@ -1,58 +1,61 @@
 package handler
 
 import (
-	"toko-api/dto"
+	"fmt"
+	"path/filepath"
+	"toko-api/config"
 	"toko-api/service"
-	"toko-api/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetStore(c *fiber.Ctx) error {
-	userIDRaw := c.Locals("user_id")
-	userIDFloat, ok := userIDRaw.(float64)
-	if !ok {
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, "Invalid user ID")
-	}
-	userID := uint(userIDFloat)
-
-	store, err := service.GetStoreByUserID(userID)
+func GetMyToko(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
+	toko, err := service.GetTokoByUser(userID)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusNotFound, "Store not found")
+		return c.Status(404).JSON(fiber.Map{"status": false, "message": err.Error()})
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Store fetched", dto.StoreResponse{
-		ID:        store.ID,
-		Name:      store.Name,
-		UserID:    store.UserID,
-		CreatedAt: store.CreatedAt,
-		UpdatedAt: store.UpdatedAt,
-	})
+	return c.JSON(fiber.Map{"status": true, "message": "Data toko", "data": toko})
 }
 
-func UpdateStore(c *fiber.Ctx) error {
-	userIDRaw := c.Locals("user_id")
-	userIDFloat, ok := userIDRaw.(float64)
-	if !ok {
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, "Invalid user ID")
-	}
-	userID := uint(userIDFloat)
+func UpdateMyToko(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
 
-	var input dto.UpdateStoreRequest
-	if err := c.BodyParser(&input); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
-	}
-
-	updatedStore, err := service.UpdateStoreByUserID(userID, input)
+	toko, err := service.GetTokoByUser(userID)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+		return c.Status(404).JSON(fiber.Map{"status": false, "message": "Toko tidak ditemukan"})
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Store updated", dto.StoreResponse{
-		ID:        updatedStore.ID,
-		Name:      updatedStore.Name,
-		UserID:    updatedStore.UserID,
-		CreatedAt: updatedStore.CreatedAt,
-		UpdatedAt: updatedStore.UpdatedAt,
+	namaToko := c.FormValue("nama_toko")
+	deskripsi := c.FormValue("deskripsi")
+
+	file, err := c.FormFile("foto")
+	if err == nil {
+		filename := fmt.Sprintf("toko_%d_%s", userID, file.Filename)
+		savePath := filepath.Join("uploads/toko", filename)
+
+		if err := c.SaveFile(file, savePath); err != nil {
+			return c.Status(500).JSON(fiber.Map{"status": false, "message": "Gagal menyimpan foto", "error": err.Error()})
+		}
+
+		toko.Foto = savePath
+	}
+
+	if namaToko != "" {
+		toko.NamaToko = namaToko
+	}
+	if deskripsi != "" {
+		toko.Deskripsi = deskripsi
+	}
+
+	if err := config.DB.Save(&toko).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": false, "message": "Gagal update toko", "error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{
+		"status":  true,
+		"message": "Toko berhasil diperbarui",
+		"data":    toko,
 	})
 }

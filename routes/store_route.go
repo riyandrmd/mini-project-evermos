@@ -8,7 +8,8 @@ import (
 )
 
 func StoreRoutes(app *fiber.App) {
-	group := app.Group("/store", middleware.AuthJWT())
-	group.Get("/", handler.GetStore)
-	group.Put("/", handler.UpdateStore)
+	toko := app.Group("/toko", middleware.AuthJWT())
+
+	toko.Get("/", handler.GetMyToko)
+	toko.Put("/", handler.UpdateMyToko)
 }
