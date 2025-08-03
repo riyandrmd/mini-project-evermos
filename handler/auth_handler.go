@@ -42,3 +42,40 @@ func Register(c *fiber.Ctx) error {
 		"message": "Registrasi berhasil",
 	})
 }
+
+func Login(c *fiber.Ctx) error {
+	var req dto.LoginRequest
+
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  false,
+			"message": "Gagal parsing body",
+			"error":   err.Error(),
+		})
+	}
+
+	if err := validate.Struct(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  false,
+			"message": "Validasi gagal",
+			"error":   err.Error(),
+		})
+	}
+
+	token, err := service.LoginUser(req)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"status":  false,
+			"message": "Login gagal",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"status":  true,
+		"message": "Login berhasil",
+		"data": fiber.Map{
+			"token": token,
+		},
+	})
+}

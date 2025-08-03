@@ -10,23 +10,34 @@ import (
 
 func AuthJWT() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		auth := c.Get("Authorization")
-		if auth == "" || !strings.HasPrefix(auth, "Bearer ") {
-			return fiber.NewError(fiber.StatusUnauthorized, "Missing or invalid token")
+		authHeader := c.Get("Authorization")
+		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"status":  false,
+				"message": "Unauthorized: token tidak ada",
+			})
 		}
 
-		tokenStr := strings.TrimPrefix(auth, "Bearer ")
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
-		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 			return []byte(os.Getenv("JWT_SECRET")), nil
 		})
+
 		if err != nil || !token.Valid {
-			return fiber.NewError(fiber.StatusUnauthorized, "Invalid or expired token")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"status":  false,
+				"message": "Unauthorized: token tidak valid",
+			})
 		}
 
 		claims := token.Claims.(jwt.MapClaims)
-		c.Locals("user_id", claims["user_id"])
-		c.Locals("is_admin", claims["is_admin"])
+		userID := uint(claims["user_id"].(float64))
+		isAdmin := claims["is_admin"].(bool)
+
+		c.Locals("user_id", userID)
+		c.Locals("is_admin", isAdmin)
+
 		return c.Next()
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"toko-api/config"
 	"toko-api/dto"
 	"toko-api/model"
+	"toko-api/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -51,4 +52,24 @@ func RegisterUser(input dto.RegisterRequest) error {
 	}
 
 	return nil
+}
+
+func LoginUser(input dto.LoginRequest) (string, error) {
+	var user model.User
+
+	if err := config.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
+		return "", errors.New("email tidak ditemukan")
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(user.KataSandi), []byte(input.KataSandi))
+	if err != nil {
+		return "", errors.New("kata sandi salah")
+	}
+
+	token, err := utils.GenerateToken(user.ID, user.IsAdmin)
+	if err != nil {
+		return "", errors.New("gagal membuat token")
+	}
+
+	return token, nil
 }

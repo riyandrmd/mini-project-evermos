@@ -21,3 +21,15 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 }
+
+type UpdateUserRequest struct {
+	Nama         string `json:"nama"`
+	Notelp       string `json:"notelp"`
+	Email        string `json:"email"`
+	TanggalLahir string `json:"tanggal_lahir"`
+	JenisKelamin string `json:"jenis_kelamin"`
+	Tentang      string `json:"tentang"`
+	Pekerjaan    string `json:"pekerjaan"`
+	IDProvinsi   string `json:"id_provinsi"`
+	IDKota       string `json:"id_kota"`
+}
