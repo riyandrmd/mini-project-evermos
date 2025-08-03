@@ -2,11 +2,11 @@ package dto
 
 type CreateTrxItem struct {
 	ProductID uint `json:"product_id" validate:"required"`
-	Qty       int  `json:"qty" validate:"required,min=1"`
+	Qty       int  `json:"qty" validate:"required,gt=0"`
 }
 
 type CreateTrxRequest struct {
-	Method    string          `json:"method" validate:"required"`
-	AddressID uint            `json:"address_id" validate:"required"`
-	Items     []CreateTrxItem `json:"items" validate:"required,dive"`
+	IDAlamat         uint            `json:"id_alamat" validate:"required"`
+	MetodePembayaran string          `json:"metode_pembayaran" validate:"required"`
+	Items            []CreateTrxItem `json:"items" validate:"required,dive"`
 }

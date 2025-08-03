@@ -1,15 +1,20 @@
 package model
 
-import "gorm.io/gorm"
+import "time"
 
 type Trx struct {
-	gorm.Model
-	UserID      uint        `json:"user_id"`
-	AddressID   uint        `json:"address_id"`
-	Method      string      `json:"method"`
-	InvoiceCode string      `json:"invoice_code"`
-	TotalPrice  float64     `json:"total_price"`
-	User        User        `json:"-" gorm:"foreignKey:UserID"`
-	Address     *Address    `json:"-" gorm:"foreignKey:AddressID"`
-	DetailTrx   []DetailTrx `json:"-" gorm:"foreignKey:TrxID"`
+	ID               uint   `gorm:"primaryKey" json:"id"`
+	UserID           uint   `json:"user_id"`
+	KodeInvoice      string `json:"kode_invoice"`
+	HargaTotal       int    `json:"harga_total"`
+	MetodePembayaran string `json:"metode_pembayaran"`
+
+	AlamatID uint   `json:"alamat_id"`
+	Alamat   Alamat `json:"alamat" gorm:"foreignKey:AlamatID"`
+
+	User   User        `json:"user" gorm:"foreignKey:UserID"`
+	Detail []TrxDetail `json:"detail" gorm:"foreignKey:TrxID"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

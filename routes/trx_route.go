@@ -7,9 +7,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func TrxRoutes(app fiber.Router) {
+func TrxRoutes(app *fiber.App) {
 	trx := app.Group("/transactions", middleware.AuthJWT())
-	trx.Post("/", handler.CreateTrx)
-	trx.Get("/my", handler.GetMyTransactions)
-	trx.Get("/:id", handler.GetTrxByID)
+	trx.Post("/", handler.CreateTransaction)
+	trx.Get("/", handler.GetMyTransactions)
+	trx.Get("/:id", handler.GetTransactionByID)
 }

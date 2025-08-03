@@ -7,110 +7,117 @@ import (
 	"toko-api/config"
 	"toko-api/dto"
 	"toko-api/model"
-
-	"gorm.io/gorm"
 )
 
-func CreateTrx(userID uint, req dto.CreateTrxRequest) error {
-	db := config.DB
-
-	var address model.Address
-	if err := db.Where("id = ? AND user_id = ?", req.AddressID, userID).First(&address).Error; err != nil {
-		return errors.New("invalid address")
+func CreateTransaction(userID uint, input dto.CreateTrxRequest) (*model.Trx, error) {
+	if len(input.Items) == 0 {
+		return nil, errors.New("transaksi tidak boleh kosong")
 	}
 
-	//Buat kode invoice pake time
-	invoiceCode := fmt.Sprintf("INV-%d", time.Now().UnixNano())
+	var totalHarga int
+	var trxDetails []model.TrxDetail
 
-	trx := model.Trx{
-		InvoiceCode: invoiceCode,
-		Method:      req.Method,
-		UserID:      userID,
-		AddressID:   req.AddressID,
-	}
-
-	totalPrice := 0.0
-	var detailTrxList []model.DetailTrx
-
-	for _, item := range req.Items {
+	for _, item := range input.Items {
 		var product model.Product
-		if err := db.Where("id = ?", item.ProductID).Preload("Store").First(&product).Error; err != nil {
-			return fmt.Errorf("product ID %d not found", item.ProductID)
+		if err := config.DB.First(&product, item.ProductID).Error; err != nil {
+			return nil, fmt.Errorf("produk %d tidak ditemukan", item.ProductID)
 		}
 
-		logProduct := model.LogProduct{
-			ProductID:     product.ID,
-			Name:          product.Name,
-			Slug:          product.Slug,
-			Description:   product.Description,
-			PriceReseller: product.PriceReseller,
-			PriceCustomer: product.PriceCustomer,
-			CategoryID:    product.CategoryID,
-			StoreID:       product.StoreID,
-		}
-		if err := db.Create(&logProduct).Error; err != nil {
-			return err
+		if product.Stok < item.Qty {
+			return nil, fmt.Errorf("stok produk %s tidak cukup", product.NamaProduk)
 		}
 
-		subTotal := product.PriceCustomer * float64(item.Qty)
-		totalPrice += subTotal
+		// Buat log produk
+		log := model.LogProduk{
+			NamaProduk: product.NamaProduk,
+			Slug:       product.Slug,
+			Deskripsi:  product.Deskripsi,
+			Harga:      product.Harga,
+			Stok:       product.Stok,
+			TokoID:     product.TokoID,
+			CategoryID: product.CategoryID,
+		}
+		if err := config.DB.Create(&log).Error; err != nil {
+			return nil, errors.New("gagal menyimpan log produk")
+		}
 
-		detailTrxList = append(detailTrxList, model.DetailTrx{
-			LogProductID: logProduct.ID,
-			StoreID:      product.StoreID,
-			Qty:          item.Qty,
-			TotalPrice:   subTotal,
+		hargaTotal := product.Harga * item.Qty
+		totalHarga += hargaTotal
+
+		trxDetails = append(trxDetails, model.TrxDetail{
+			LogProdukID: log.ID,
+			TokoID:      product.TokoID,
+			Qty:         item.Qty,
+			HargaTotal:  hargaTotal,
 		})
+
+		// Kurangi stok produk
+		product.Stok -= item.Qty
+		config.DB.Save(&product)
 	}
 
-	trx.TotalPrice = totalPrice
-	if err := db.Create(&trx).Error; err != nil {
-		return err
+	var alamat model.Alamat
+	if err := config.DB.First(&alamat, "id = ? AND user_id = ?", input.IDAlamat, userID).Error; err != nil {
+		return nil, errors.New("alamat tidak ditemukan")
 	}
 
-	for i := range detailTrxList {
-		detailTrxList[i].TrxID = trx.ID
-	}
-	if err := db.Create(&detailTrxList).Error; err != nil {
-		return err
+	// Buat transaksi utama
+	trx := model.Trx{
+		UserID:           userID,
+		KodeInvoice:      fmt.Sprintf("INV-%d-%d", userID, time.Now().Unix()),
+		AlamatID:         input.IDAlamat,
+		MetodePembayaran: input.MetodePembayaran,
+		HargaTotal:       totalHarga,
 	}
 
-	return nil
+	if err := config.DB.Create(&trx).Error; err != nil {
+		return nil, errors.New("gagal membuat transaksi")
+	}
+
+	// Tambahkan ke detail_trx
+	for i := range trxDetails {
+		trxDetails[i].TrxID = trx.ID
+	}
+	if err := config.DB.Create(&trxDetails).Error; err != nil {
+		return nil, errors.New("gagal menyimpan detail transaksi")
+	}
+
+	return &trx, nil
 }
 
-func GetMyTransactions(userID uint) ([]model.Trx, error) {
-	db := config.DB
+func GetUserTransactions(userID uint) ([]model.Trx, error) {
+	var transaksi []model.Trx
 
-	var trxList []model.Trx
-	err := db.Preload("DetailTrx").
-		Preload("DetailTrx.LogProduct").
-		Preload("Address").
+	err := config.DB.
+		Preload("Detail.LogProduk").
+		Preload("Alamat").
+		Preload("User").
 		Where("user_id = ?", userID).
 		Order("created_at DESC").
-		Find(&trxList).Error
+		Find(&transaksi).Error
 
 	if err != nil {
 		return nil, err
 	}
 
-	return trxList, nil
+	return transaksi, nil
 }
 
-func GetTrxByID(userID uint, trxID uint) (*model.Trx, error) {
-	db := config.DB
-
+func GetTransactionByID(userID uint, trxID string) (*model.Trx, error) {
 	var trx model.Trx
-	err := db.Preload("DetailTrx").
-		Preload("DetailTrx.LogProduct").
-		Preload("Address").
-		Where("id = ? AND user_id = ?", trxID, userID).
-		First(&trx).Error
+
+	err := config.DB.
+		Preload("Detail.LogProduk").
+		Preload("Alamat").
+		Preload("User").
+		First(&trx, trxID).Error
 
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("transaction not found")
-		}
-		return nil, err
+		return nil, errors.New("transaksi tidak ditemukan")
+	}
+
+	if trx.UserID != userID {
+		return nil, errors.New("kamu tidak berhak mengakses transaksi ini")
 	}
 
 	return &trx, nil
