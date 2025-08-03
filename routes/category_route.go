@@ -8,10 +8,13 @@ import (
 )
 
 func CategoryRoutes(app *fiber.App) {
-	group := app.Group("/categories")
+	c := app.Group("/categories")
 
-	group.Get("/", handler.GetAllCategories)
-	group.Post("/", middleware.AuthJWT(), handler.CreateCategory)
-	group.Put("/:id", middleware.AuthJWT(), handler.UpdateCategory)
-	group.Delete("/:id", middleware.AuthJWT(), handler.DeleteCategory)
+	c.Get("/", handler.GetAllCategories)
+	c.Get("/:id", handler.GetCategoryByID)
+
+	// admin only
+	c.Post("/", middleware.AuthJWT(), middleware.AdminOnly(), handler.CreateCategory)
+	c.Put("/:id", middleware.AuthJWT(), middleware.AdminOnly(), handler.UpdateCategory)
+	c.Delete("/:id", middleware.AuthJWT(), middleware.AdminOnly(), handler.DeleteCategory)
 }

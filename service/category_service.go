@@ -2,43 +2,36 @@ package service
 
 import (
 	"toko-api/config"
-	"toko-api/dto"
 	"toko-api/model"
 )
 
-func CreateCategory(input dto.CreateCategoryRequest) (*model.Category, error) {
-	category := model.Category{Name: input.Name}
-	if err := config.DB.Create(&category).Error; err != nil {
-		return nil, err
-	}
-	return &category, nil
-}
-
 func GetAllCategories() ([]model.Category, error) {
 	var categories []model.Category
-	if err := config.DB.Find(&categories).Error; err != nil {
-		return nil, err
-	}
-	return categories, nil
+	err := config.DB.Find(&categories).Error
+	return categories, err
 }
 
-func UpdateCategory(id string, input dto.UpdateCategoryRequest) (*model.Category, error) {
+func GetCategoryByID(id string) (*model.Category, error) {
+	var category model.Category
+	err := config.DB.First(&category, id).Error
+	return &category, err
+}
+
+func CreateCategory(input model.Category) (*model.Category, error) {
+	err := config.DB.Create(&input).Error
+	return &input, err
+}
+
+func UpdateCategory(id string, input model.Category) (*model.Category, error) {
 	var category model.Category
 	if err := config.DB.First(&category, id).Error; err != nil {
 		return nil, err
 	}
-
-	category.Name = input.Name
-	if err := config.DB.Save(&category).Error; err != nil {
-		return nil, err
-	}
-
-	return &category, nil
+	category.NamaCategory = input.NamaCategory
+	err := config.DB.Save(&category).Error
+	return &category, err
 }
 
 func DeleteCategory(id string) error {
-	if err := config.DB.Delete(&model.Category{}, id).Error; err != nil {
-		return err
-	}
-	return nil
+	return config.DB.Delete(&model.Category{}, id).Error
 }
