@@ -29,14 +29,14 @@ func InitDB() {
 
 	err = db.AutoMigrate(
 		&model.User{},
+		&model.Toko{},
+		&model.Alamat{},
 		&model.Category{},
-		&model.Store{},
 		&model.Product{},
-		&model.Address{},
-		&model.Trx{},
-		&model.DetailTrx{},
-		&model.LogProduct{},
 		&model.ProductImage{},
+		&model.Trx{},
+		&model.TrxDetail{},
+		&model.LogProduk{},
 	)
 	if err != nil {
 		panic("Failed to migrate table: " + err.Error())

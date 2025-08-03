@@ -7,6 +7,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func CreateCategory(c *fiber.Ctx) error {
+	var input model.Category
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(400).JSON(fiber.Map{"status": false, "message": "Input invalid", "error": err.Error()})
+	}
+
+	data, err := service.CreateCategory(input)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": false, "message": "Gagal tambah kategori", "error": err.Error()})
+	}
+	return c.Status(201).JSON(fiber.Map{"status": true, "message": "Kategori dibuat", "data": data})
+}
+
 func GetAllCategories(c *fiber.Ctx) error {
 	data, err := service.GetAllCategories()
 	if err != nil {
@@ -22,19 +35,6 @@ func GetCategoryByID(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"status": false, "message": "Kategori tidak ditemukan"})
 	}
 	return c.JSON(fiber.Map{"status": true, "data": data})
-}
-
-func CreateCategory(c *fiber.Ctx) error {
-	var input model.Category
-	if err := c.BodyParser(&input); err != nil {
-		return c.Status(400).JSON(fiber.Map{"status": false, "message": "Input invalid", "error": err.Error()})
-	}
-
-	data, err := service.CreateCategory(input)
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": false, "message": "Gagal tambah kategori", "error": err.Error()})
-	}
-	return c.Status(201).JSON(fiber.Map{"status": true, "message": "Kategori dibuat", "data": data})
 }
 
 func UpdateCategory(c *fiber.Ctx) error {

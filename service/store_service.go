@@ -1,38 +1,31 @@
 package service
 
 import (
+	"errors"
 	"toko-api/config"
-	"toko-api/dto"
 	"toko-api/model"
 )
 
-func CreateStore(userID uint, storeName string) error {
-	store := model.Store{
-		Name:   storeName,
-		UserID: userID,
+func GetTokoByUser(userID uint) (*model.Toko, error) {
+	var toko model.Toko
+	if err := config.DB.Where("user_id = ?", userID).First(&toko).Error; err != nil {
+		return nil, errors.New("toko tidak ditemukan")
 	}
-	return config.DB.Create(&store).Error
+	return &toko, nil
 }
 
-func GetStoreByUserID(userID uint) (*model.Store, error) {
-	var store model.Store
-	if err := config.DB.Where("user_id = ?", userID).First(&store).Error; err != nil {
-		return nil, err
-	}
-	return &store, nil
-}
-
-func UpdateStoreByUserID(userID uint, input dto.UpdateStoreRequest) (*model.Store, error) {
-	var store model.Store
-
-	if err := config.DB.Where("user_id = ?", userID).First(&store).Error; err != nil {
+func UpdateToko(userID uint, input model.Toko) (*model.Toko, error) {
+	toko, err := GetTokoByUser(userID)
+	if err != nil {
 		return nil, err
 	}
 
-	store.Name = input.Name
-	if err := config.DB.Save(&store).Error; err != nil {
+	toko.NamaToko = input.NamaToko
+	toko.Deskripsi = input.Deskripsi
+	toko.Foto = input.Foto
+
+	if err := config.DB.Save(&toko).Error; err != nil {
 		return nil, err
 	}
-
-	return &store, nil
+	return toko, nil
 }

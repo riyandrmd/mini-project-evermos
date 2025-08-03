@@ -22,12 +22,11 @@ func main() {
 	routes.AuthRoutes(app)
 	routes.UserRoutes(app)
 	routes.AddressRoutes(app)
+	routes.StoreRoutes(app)
+	routes.CategoryRoutes(app)
 
-	// routes.CategoryRoutes(app)
-	// routes.StoreRoutes(app)
-	// routes.ProductRoutes(app)
-	// routes.TrxRoutes(app)
-	// routes.WilayahRoutes(app)
+	routes.ProductRoutes(app)
+	routes.TrxRoutes(app)
 
 	log.Fatal(app.Listen(":3000"))
 }
