@@ -7,14 +7,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CategoryRoutes(app *fiber.App) {
-	c := app.Group("/categories")
+func CategoryRoutes(router fiber.Router) {
+	category := router.Group("/categories")
 
-	c.Get("/", handler.GetAllCategories)
-	c.Get("/:id", handler.GetCategoryByID)
+	category.Get("/", handler.GetAllCategories)
+	category.Get("/:id", handler.GetCategoryByID)
 
 	// admin only
-	c.Post("/", middleware.AuthJWT(), middleware.AdminOnly(), handler.CreateCategory)
-	c.Put("/:id", middleware.AuthJWT(), middleware.AdminOnly(), handler.UpdateCategory)
-	c.Delete("/:id", middleware.AuthJWT(), middleware.AdminOnly(), handler.DeleteCategory)
+	category.Post("/", middleware.AuthJWT(), middleware.AdminOnly(), handler.CreateCategory)
+	category.Put("/:id", middleware.AuthJWT(), middleware.AdminOnly(), handler.UpdateCategory)
+	category.Delete("/:id", middleware.AuthJWT(), middleware.AdminOnly(), handler.DeleteCategory)
 }

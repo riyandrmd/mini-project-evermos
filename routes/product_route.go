@@ -7,8 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ProductRoutes(app *fiber.App) {
-	products := app.Group("/products")
+func ProductRoutes(router fiber.Router) {
+	products := router.Group("/products")
 
 	products.Post("/", middleware.AuthJWT(), handler.CreateProduct)
 	products.Get("/", handler.GetAllProducts)

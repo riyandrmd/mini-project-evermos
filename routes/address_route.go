@@ -7,8 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func AddressRoutes(app *fiber.App) {
-	user := app.Group("/user", middleware.AuthJWT())
+func AddressRoutes(router fiber.Router) {
+	user := router.Group("/user", middleware.AuthJWT())
 
 	user.Post("/alamat", handler.CreateAlamat)
 	user.Get("/alamat", handler.GetAlamatSaya)

@@ -18,14 +18,15 @@ func main() {
 	config.InitDB()
 
 	app := fiber.New()
+	api := app.Group("/api/v1")
 
-	routes.AuthRoutes(app)
-	routes.UserRoutes(app)
-	routes.AddressRoutes(app)
-	routes.StoreRoutes(app)
-	routes.CategoryRoutes(app)
-	routes.ProductRoutes(app)
-	routes.TrxRoutes(app)
+	routes.AuthRoutes(api)
+	routes.UserRoutes(api)
+	routes.AddressRoutes(api)
+	routes.StoreRoutes(api)
+	routes.CategoryRoutes(api)
+	routes.ProductRoutes(api)
+	routes.TrxRoutes(api)
 	routes.ProvinsiRoutes(app)
 
 	log.Fatal(app.Listen(":3000"))
