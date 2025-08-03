@@ -3,55 +3,59 @@ package service
 import (
 	"errors"
 	"toko-api/config"
-	"toko-api/dto"
 	"toko-api/model"
 )
 
-func CreateAddress(userID uint, input dto.CreateAddressRequest) (*model.Address, error) {
-	addr := model.Address{
-		UserID:    userID,
-		Label:     input.Label,
-		Recipient: input.Recipient,
-		Phone:     input.Phone,
-		Address:   input.Address,
+func CreateAlamat(userID uint, input model.Alamat) (*model.Alamat, error) {
+	input.UserID = userID
+	if err := config.DB.Create(&input).Error; err != nil {
+		return nil, err
 	}
-	err := config.DB.Create(&addr).Error
-	return &addr, err
+	return &input, nil
 }
 
-func GetAddressesByUser(userID uint) ([]model.Address, error) {
-	var addrs []model.Address
-	err := config.DB.Where("user_id = ?", userID).Find(&addrs).Error
-	return addrs, err
+func GetAlamatByUser(userID uint) ([]model.Alamat, error) {
+	var alamat []model.Alamat
+	if err := config.DB.Where("user_id = ?", userID).Find(&alamat).Error; err != nil {
+		return nil, err
+	}
+	return alamat, nil
 }
 
-func UpdateAddress(userID, addrID uint, input dto.CreateAddressRequest) (*model.Address, error) {
-	var updated model.Address
-
-	result := config.DB.Model(&updated).
-		Where("id = ? AND user_id = ?", addrID, userID).
-		Updates(model.Address{
-			Label:     input.Label,
-			Recipient: input.Recipient,
-			Phone:     input.Phone,
-			Address:   input.Address,
-		})
-
-	if result.RowsAffected == 0 {
-		return nil, errors.New("address not found or not owned by user")
+func GetAlamatByID(userID uint, id string) (*model.Alamat, error) {
+	var alamat model.Alamat
+	if err := config.DB.First(&alamat, id).Error; err != nil {
+		return nil, errors.New("alamat tidak ditemukan")
 	}
-	if result.Error != nil {
-		return nil, result.Error
+	if alamat.UserID != userID {
+		return nil, errors.New("alamat bukan milik Anda")
 	}
-
-	config.DB.First(&updated, addrID)
-	return &updated, nil
+	return &alamat, nil
 }
 
-func DeleteAddress(userID, addrID uint) error {
-	result := config.DB.Where("id = ? AND user_id = ?", addrID, userID).Delete(&model.Address{})
-	if result.RowsAffected == 0 {
-		return errors.New("address not found or not owned by user")
+func UpdateAlamat(userID uint, id string, input model.Alamat) (*model.Alamat, error) {
+	alamat, err := GetAlamatByID(userID, id)
+	if err != nil {
+		return nil, err
 	}
-	return result.Error
+	// update field (kecuali id & user_id)
+	alamat.JudulAlamat = input.JudulAlamat
+	alamat.NamaPenerima = input.NamaPenerima
+	alamat.NoTelp = input.NoTelp
+	alamat.DetailAlamat = input.DetailAlamat
+	alamat.IDProvinsi = input.IDProvinsi
+	alamat.IDKota = input.IDKota
+
+	if err := config.DB.Save(&alamat).Error; err != nil {
+		return nil, err
+	}
+	return alamat, nil
+}
+
+func DeleteAlamat(userID uint, id string) error {
+	alamat, err := GetAlamatByID(userID, id)
+	if err != nil {
+		return err
+	}
+	return config.DB.Delete(&alamat).Error
 }

@@ -8,9 +8,11 @@ import (
 )
 
 func AddressRoutes(app *fiber.App) {
-	group := app.Group("/address", middleware.AuthJWT())
-	group.Post("/", handler.CreateAddress)
-	group.Get("/", handler.GetMyAddresses)
-	group.Put("/:id", handler.UpdateAddress)
-	group.Delete("/:id", handler.DeleteAddress)
+	user := app.Group("/user", middleware.AuthJWT())
+
+	user.Post("/alamat", handler.CreateAlamat)
+	user.Get("/alamat", handler.GetAlamatSaya)
+	user.Get("/alamat/:id", handler.GetAlamatByID)
+	user.Put("/alamat/:id", handler.UpdateAlamat)
+	user.Delete("/alamat/:id", handler.DeleteAlamat)
 }

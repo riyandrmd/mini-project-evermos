@@ -20,12 +20,14 @@ func main() {
 	app := fiber.New()
 
 	routes.AuthRoutes(app)
-	routes.CategoryRoutes(app)
-	routes.StoreRoutes(app)
-	routes.ProductRoutes(app)
+	routes.UserRoutes(app)
 	routes.AddressRoutes(app)
-	routes.TrxRoutes(app)
-	routes.WilayahRoutes(app)
 
-	log.Fatal(app.Listen(":8080"))
+	// routes.CategoryRoutes(app)
+	// routes.StoreRoutes(app)
+	// routes.ProductRoutes(app)
+	// routes.TrxRoutes(app)
+	// routes.WilayahRoutes(app)
+
+	log.Fatal(app.Listen(":3000"))
 }

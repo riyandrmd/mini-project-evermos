@@ -1,98 +1,73 @@
 package handler
 
 import (
-	"strconv"
-	"time"
-	"toko-api/dto"
 	"toko-api/model"
 	"toko-api/service"
-	"toko-api/utils"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
-func toAddressResponse(a *model.Address) dto.AddressResponse {
-	return dto.AddressResponse{
-		ID:        a.ID,
-		Label:     a.Label,
-		Recipient: a.Recipient,
-		Phone:     a.Phone,
-		Address:   a.Address,
-		UserID:    a.UserID,
-		CreatedAt: a.CreatedAt.Format(time.RFC3339),
-		UpdatedAt: a.UpdatedAt.Format(time.RFC3339),
-	}
-}
+func CreateAlamat(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
+	var input model.Alamat
 
-func CreateAddress(c *fiber.Ctx) error {
-	userID := uint(c.Locals("user_id").(float64))
-
-	var input dto.CreateAddressRequest
 	if err := c.BodyParser(&input); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
-	}
-	if err := validator.New().Struct(input); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+		return c.Status(400).JSON(fiber.Map{"status": false, "message": "Input tidak valid", "error": err.Error()})
 	}
 
-	address, err := service.CreateAddress(userID, input)
+	alamat, err := service.CreateAlamat(userID, input)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+		return c.Status(500).JSON(fiber.Map{"status": false, "message": "Gagal buat alamat", "error": err.Error()})
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusCreated, "Address created", toAddressResponse(address))
+	return c.Status(201).JSON(fiber.Map{"status": true, "message": "Alamat dibuat", "data": alamat})
 }
 
-func GetMyAddresses(c *fiber.Ctx) error {
-	userID := uint(c.Locals("user_id").(float64))
-
-	addresses, err := service.GetAddressesByUser(userID)
+func GetAlamatSaya(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
+	alamat, err := service.GetAlamatByUser(userID)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+		return c.Status(500).JSON(fiber.Map{"status": false, "message": "Gagal ambil alamat", "error": err.Error()})
 	}
-
-	var result []dto.AddressResponse
-	for _, addr := range addresses {
-		result = append(result, toAddressResponse(&addr))
-	}
-
-	return utils.SuccessResponse(c, fiber.StatusOK, "Addresses fetched", result)
+	return c.JSON(fiber.Map{"status": true, "message": "Data alamat", "data": alamat})
 }
 
-func UpdateAddress(c *fiber.Ctx) error {
-	userID := uint(c.Locals("user_id").(float64))
-	id, err := strconv.Atoi(c.Params("id"))
+func GetAlamatByID(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
+	id := c.Params("id")
+
+	alamat, err := service.GetAlamatByID(userID, id)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid address ID")
+		return c.Status(404).JSON(fiber.Map{"status": false, "message": err.Error()})
 	}
 
-	var input dto.CreateAddressRequest
+	return c.JSON(fiber.Map{"status": true, "message": "Data alamat ditemukan", "data": alamat})
+}
+
+func UpdateAlamat(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
+	id := c.Params("id")
+
+	var input model.Alamat
 	if err := c.BodyParser(&input); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
-	}
-	if err := validator.New().Struct(input); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+		return c.Status(400).JSON(fiber.Map{"status": false, "message": "Input tidak valid", "error": err.Error()})
 	}
 
-	addr, err := service.UpdateAddress(userID, uint(id), input)
+	alamat, err := service.UpdateAlamat(userID, id, input)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+		return c.Status(400).JSON(fiber.Map{"status": false, "message": err.Error()})
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Address updated", toAddressResponse(addr))
+	return c.JSON(fiber.Map{"status": true, "message": "Alamat diperbarui", "data": alamat})
 }
 
-func DeleteAddress(c *fiber.Ctx) error {
-	userID := uint(c.Locals("user_id").(float64))
-	id, err := strconv.Atoi(c.Params("id"))
-	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid address ID")
+func DeleteAlamat(c *fiber.Ctx) error {
+	userID := c.Locals("user_id").(uint)
+	id := c.Params("id")
+
+	if err := service.DeleteAlamat(userID, id); err != nil {
+		return c.Status(400).JSON(fiber.Map{"status": false, "message": err.Error()})
 	}
 
-	if err := service.DeleteAddress(userID, uint(id)); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusNotFound, err.Error())
-	}
-
-	return utils.SuccessResponse(c, fiber.StatusOK, "Address deleted", nil)
+	return c.JSON(fiber.Map{"status": true, "message": "Alamat dihapus"})
 }
