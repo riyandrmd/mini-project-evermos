@@ -1,20 +1,22 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
+import "time"
 
 type Product struct {
-	gorm.Model
-	Name          string         `json:"name"`
-	Slug          string         `json:"slug"`
-	PriceReseller float64        `json:"price_reseller"`
-	PriceCustomer float64        `json:"price_customer"`
-	Description   string         `json:"description"`
-	Stock         int            `json:"stock"`
-	StoreID       uint           `json:"store_id"`
-	CategoryID    uint           `json:"category_id"`
-	Store         *Store         `json:"-"`
-	Category      *Category      `json:"-"`
-	Images        []ProductImage `json:"images" gorm:"foreignKey:ProductID"`
+	ID         uint   `gorm:"primaryKey" json:"id"`
+	NamaProduk string `json:"nama_produk"`
+	Slug       string `json:"slug"`
+	Deskripsi  string `json:"deskripsi"`
+	Harga      int    `json:"harga"`
+	Stok       int    `json:"stok"`
+
+	CategoryID uint `json:"id_category"`
+	TokoID     uint `json:"id_toko"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+
+	Toko     Toko           `json:"toko" gorm:"foreignKey:TokoID"`
+	Category Category       `json:"category" gorm:"foreignKey:CategoryID"`
+	Images   []ProductImage `json:"images" gorm:"foreignKey:ProductID"`
 }

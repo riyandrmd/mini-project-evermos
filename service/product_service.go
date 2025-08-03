@@ -1,138 +1,42 @@
 package service
 
 import (
-	"errors"
+	"fmt"
+	"strings"
 	"toko-api/config"
 	"toko-api/dto"
 	"toko-api/model"
 )
 
-func CreateProduct(userID uint, request dto.CreateProductRequest) error {
-	var store model.Store
-	if err := config.DB.Where("user_id = ?", userID).First(&store).Error; err != nil {
-		return errors.New("store not found")
+func SaveProductImage(productID uint, url string) error {
+	img := model.ProductImage{
+		ProductID: productID,
+		URL:       url,
+	}
+	return config.DB.Create(&img).Error
+}
+
+func CreateProduct(userID uint, input dto.CreateProductRequest) (*model.Product, error) {
+	var toko model.Toko
+	if err := config.DB.Where("user_id = ?", userID).First(&toko).Error; err != nil {
+		return nil, fmt.Errorf("toko tidak ditemukan")
 	}
 
-	var exists model.Product
-	if err := config.DB.Where("slug = ?", request.Slug).First(&exists).Error; err == nil {
-		return errors.New("slug already exists")
-	}
+	slug := strings.ToLower(strings.ReplaceAll(input.NamaProduk, " ", "-"))
 
 	product := model.Product{
-		Name:          request.Name,
-		Slug:          request.Slug,
-		PriceReseller: request.PriceReseller,
-		PriceCustomer: request.PriceCustomer,
-		Description:   request.Description,
-		Stock:         request.Stock,
-		CategoryID:    request.CategoryID,
-		StoreID:       store.ID,
+		NamaProduk: input.NamaProduk,
+		Slug:       slug,
+		Deskripsi:  input.Deskripsi,
+		Harga:      input.Harga,
+		Stok:       input.Stok,
+		TokoID:     toko.ID,
+		CategoryID: input.CategoryID,
 	}
 
 	if err := config.DB.Create(&product).Error; err != nil {
-		return errors.New("failed to create product")
+		return nil, err
 	}
 
-	return nil
-}
-
-func GetAllProducts(page, limit int, name string, categoryID uint) ([]model.Product, int64, error) {
-	db := config.DB
-
-	var products []model.Product
-	var total int64
-
-	query := db.Model(&model.Product{}).Preload("Category").Preload("Store")
-
-	if name != "" {
-		query = query.Where("name LIKE ?", "%"+name+"%")
-	}
-
-	if categoryID != 0 {
-		query = query.Where("category_id = ?", categoryID)
-	}
-
-	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
-	}
-
-	offset := (page - 1) * limit
-	if err := query.Offset(offset).Limit(limit).Find(&products).Error; err != nil {
-		return nil, 0, err
-	}
-
-	return products, total, nil
-}
-
-func UpdateProduct(userID uint, id string, request dto.UpdateProductRequest) error {
-	var product model.Product
-	if err := config.DB.First(&product, id).Error; err != nil {
-		return errors.New("product not found")
-	}
-
-	var store model.Store
-	if err := config.DB.Where("id = ? AND user_id = ?", product.StoreID, userID).First(&store).Error; err != nil {
-		return errors.New("unauthorized")
-	}
-
-	if request.Name != "" {
-		product.Name = request.Name
-	}
-	if request.Slug != "" {
-		product.Slug = request.Slug
-	}
-	if request.Description != "" {
-		product.Description = request.Description
-	}
-	if request.PriceReseller != 0 {
-		product.PriceReseller = request.PriceReseller
-	}
-	if request.PriceCustomer != 0 {
-		product.PriceCustomer = request.PriceCustomer
-	}
-	if request.CategoryID != 0 {
-		product.CategoryID = request.CategoryID
-	}
-
-	if err := config.DB.Save(&product).Error; err != nil {
-		return errors.New("failed to update product")
-	}
-
-	return nil
-}
-
-func DeleteProduct(userID uint, id string) error {
-	var product model.Product
-	if err := config.DB.First(&product, id).Error; err != nil {
-		return errors.New("product not found")
-	}
-
-	var store model.Store
-	if err := config.DB.Where("id = ? AND user_id = ?", product.StoreID, userID).First(&store).Error; err != nil {
-		return errors.New("unauthorized")
-	}
-
-	if err := config.DB.Delete(&product).Error; err != nil {
-		return errors.New("failed to delete product")
-	}
-
-	return nil
-}
-
-func GetMyProducts(userID uint) ([]model.Product, error) {
-	var store model.Store
-	if err := config.DB.Where("user_id = ?", userID).First(&store).Error; err != nil {
-		return nil, errors.New("store not found")
-	}
-
-	var products []model.Product
-	if err := config.DB.
-		Preload("Store").
-		Preload("Category").
-		Where("store_id = ?", store.ID).
-		Find(&products).Error; err != nil {
-		return nil, errors.New("failed to fetch products")
-	}
-
-	return products, nil
+	return &product, nil
 }
