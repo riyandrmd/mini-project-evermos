@@ -130,7 +130,6 @@ func DeleteProduct(userID uint, productID string) error {
 		return errors.New("kamu tidak berhak menghapus produk ini")
 	}
 
-	// Hapus gambar juga (opsional)
 	config.DB.Where("product_id = ?", product.ID).Delete(&model.ProductImage{})
 
 	return config.DB.Delete(&product).Error
