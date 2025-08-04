@@ -12,7 +12,8 @@ Mini project backend menggunakan **Golang + Fiber + GORM + MySQL**, dibuat sebag
 - EMSIFA API (Wilayah)
 
 ## 👉 API testing
-[Download Postman Collection](mini-project-evermos/blob/main/Mini%20Project%20Evermos.postman_collection.json)
+[Download Postman Collection](https://github.com/riyandrmd/mini-project-evermos/blob/c5f017009bdb93d8a752949ca67997c797573346/Mini%20Project%20Evermos.postman_collection.json)
+
 
 
 ## 🛠 SQL Setup
